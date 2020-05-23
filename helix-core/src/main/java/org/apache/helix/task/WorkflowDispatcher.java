@@ -358,7 +358,7 @@ public class WorkflowDispatcher extends AbstractTaskDispatcher {
         resourceConfig.getRecord().setMapField(taskConfig.getId(), taskConfig.getConfigMap());
       }
     }
-    accessor.setProperty(keyBuilder.resourceConfig(jobResource), resourceConfig);
+//    accessor.setProperty(keyBuilder.resourceConfig(jobResource), resourceConfig);
 
     // Push out new ideal state based on number of target partitions
     IdealStateBuilder builder = new CustomModeISBuilder(jobResource);
