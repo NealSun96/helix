@@ -50,6 +50,9 @@ public class TaskGarbageCollectionStage extends AbstractAsyncBaseStage {
       if (workflowConfig != null && (!workflowConfig.isTerminable() || workflowConfig
           .isJobQueue())) {
         WorkflowContext workflowContext = dataProvider.getWorkflowContext(entry.getKey());
+        if (workflowContext == null) {
+          continue;
+        }
         long purgeInterval = workflowConfig.getJobPurgeInterval();
         long currentTime = System.currentTimeMillis();
         if (purgeInterval > 0
@@ -60,9 +63,9 @@ public class TaskGarbageCollectionStage extends AbstractAsyncBaseStage {
           if (!expiredJobs.isEmpty()) {
             expiredJobsMap.put(workflowConfig.getWorkflowId(), expiredJobs);
           }
-          scheduleNextJobPurge(workflowConfig.getWorkflowId(), currentTime, purgeInterval,
-              _rebalanceScheduler, manager);
         }
+        scheduleNextJobPurge(workflowConfig.getWorkflowId(), currentTime, purgeInterval,
+            _rebalanceScheduler, manager);
       } else if (workflowConfig == null && entry.getValue() != null && entry.getValue().getId()
           .equals(TaskUtil.WORKFLOW_CONTEXT_KW)) {
         // Find workflows that need to be purged
