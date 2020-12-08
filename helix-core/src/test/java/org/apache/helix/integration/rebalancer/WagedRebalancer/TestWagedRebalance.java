@@ -795,7 +795,7 @@ public class TestWagedRebalance extends ZkTestBase {
     Map<String, Integer> defaultInstanceCapacityMap = clusterConfig.getDefaultInstanceCapacityMap();
     for (String key : clusterConfig.getInstanceCapacityKeys()) {
       defaultInstanceCapacityMap
-          .put(key, clusterConfig.getDefaultInstanceCapacityMap().getOrDefault(key, 0) * 2);
+          .put(key, clusterConfig.getDefaultInstanceCapacityMap().getOrDefault(key, 0));
     }
     clusterConfig.setDefaultInstanceCapacityMap(defaultInstanceCapacityMap);
 
