@@ -602,7 +602,9 @@ public class BaseControllerDataProvider implements ControlContextProvider {
       Map<String, CurrentState> mergedCurrentStates = new HashMap<>();
       mergedCurrentStates
           .putAll(_taskCurrentStateCache.getParticipantState(instanceName, clientSessionId));
-      mergedCurrentStates.putAll(regularCurrentStates);
+      mergedCurrentStates.putAll(regularCurrentStates.entrySet().stream().filter(
+          entry -> TaskConstants.STATE_MODEL_NAME.equals(entry.getValue().getStateModelDefRef()))
+          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
       return Collections.unmodifiableMap(mergedCurrentStates);
     }
     return regularCurrentStates.entrySet().stream().filter(
