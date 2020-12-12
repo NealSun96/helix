@@ -760,8 +760,8 @@ public class TestWagedRebalance extends ZkTestBase {
 
   public static void main(String[] args)
       throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-    String clusterName = "test";
-    String zkAddr = "localhost:2181";
+    String clusterName = "ESPRESSO_IDENTITY2";
+    String zkAddr = "localhost:4185";
 
     HelixZkClient.ZkClientConfig clientConfig = new HelixZkClient.ZkClientConfig();
     clientConfig.setZkSerializer(new ZNRecordSerializer());
@@ -829,6 +829,8 @@ public class TestWagedRebalance extends ZkTestBase {
             filteredIdealStates, resourceConfigs);
 
     outputAssignments(dataAccessor, clusterConfig, filteredIdealStates, utilResult);
+
+    compareMovements(baselineResult, utilResult);
   }
 
   private static void outputAssignments(HelixDataAccessor dataAccessor, ClusterConfig clusterConfig,
@@ -910,5 +912,22 @@ public class TestWagedRebalance extends ZkTestBase {
     double regstd = standardDeviation.evaluate(regnums);
 
     System.out.println("Regular Weights Max " + regmax + " Min " + regmin + " STD " + regstd);
+  }
+
+  private static void compareMovements(Map<String, ResourceAssignment> oldMap,
+      Map<String, ResourceAssignment> newMap) {
+    int movements = 0;
+    for (String resource : newMap.keySet()) {
+      for (String partition: newMap.get(resource).getRecord().getMapFields().keySet()) {
+        Map<String, String> oldInstanceStateMap =
+            oldMap.get(resource).getRecord().getMapField(partition);
+        Map<String, String> newInstanceStateMap =
+            newMap.get(resource).getRecord().getMapField(partition);
+        Set<String> commonInstances = oldInstanceStateMap.keySet();
+        commonInstances.removeAll(newInstanceStateMap.keySet());
+        movements += commonInstances.size();
+      }
+    }
+    System.out.println("Total movements: " + movements);
   }
 }
