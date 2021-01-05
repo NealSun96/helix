@@ -208,6 +208,13 @@ public class AssignableNode implements Comparable<AssignableNode> {
         .map(partitionEntry -> partitionEntry.getKey()).collect(Collectors.toSet());
   }
 
+  public int getAssignedTopStatePartitionsWeightSum() {
+    return _currentAssignedReplicaMap.values().stream()
+        .flatMap(replicaMap -> replicaMap.values().stream())
+        .filter(AssignableReplica::isReplicaTopState)
+        .mapToInt(replica -> replica.getCapacity().get("CU")).sum();
+  }
+
   /**
    * @return The total count of assigned top state partitions.
    */
