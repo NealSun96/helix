@@ -20,6 +20,7 @@ package org.apache.helix.integration.rebalancer.CrushRebalancers;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -267,6 +268,8 @@ public class TestCrushAutoRebalanceNonRack extends ZkStandAloneCMTestBase {
     // shutdown participants, keep only two left
     HelixDataAccessor helixDataAccessor =
         new ZKHelixDataAccessor(CLUSTER_NAME, InstanceType.PARTICIPANT, _baseAccessor);
+    _gSetupTool.getClusterManagementTool()
+        .manuallyEnableMaintenanceMode(CLUSTER_NAME, true, "Test", Collections.emptyMap());
     for (int i = 2; i < _participants.size(); i++) {
       MockParticipantManager p = _participants.get(i);
       p.syncStop();
@@ -280,6 +283,8 @@ public class TestCrushAutoRebalanceNonRack extends ZkStandAloneCMTestBase {
       }, TestHelper.WAIT_DURATION), "Instance should be disabled and offline");
       _gSetupTool.dropInstanceFromCluster(CLUSTER_NAME, p.getInstanceName());
     }
+    _gSetupTool.getClusterManagementTool()
+        .manuallyEnableMaintenanceMode(CLUSTER_NAME, false, "Test", Collections.emptyMap());
 
     int j = 0;
     for (String stateModel : _testModels) {
